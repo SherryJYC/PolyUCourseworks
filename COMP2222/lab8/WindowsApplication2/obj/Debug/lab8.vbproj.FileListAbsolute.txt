@@ -1,0 +1,11 @@
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\bin\Debug\WindowsApplication2.exe.config
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\obj\Debug\WindowsApplication2.exe
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\obj\Debug\WindowsApplication2.xml
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\obj\Debug\WindowsApplication2.pdb
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\bin\Debug\WindowsApplication2.exe
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\bin\Debug\WindowsApplication2.pdb
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\bin\Debug\WindowsApplication2.xml
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\obj\Debug\lab8.vbprojResolveAssemblyReference.cache
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\obj\Debug\WindowsApplication2.Form1.resources
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\obj\Debug\WindowsApplication2.Resources.resources
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab8\WindowsApplication2\obj\Debug\lab8.vbproj.GenerateResource.Cache

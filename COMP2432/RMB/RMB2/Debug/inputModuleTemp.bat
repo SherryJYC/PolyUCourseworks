@@ -1,0 +1,1 @@
+addDevice -monitor_50 2016-04-21 13:00 5.0 tenant_A;

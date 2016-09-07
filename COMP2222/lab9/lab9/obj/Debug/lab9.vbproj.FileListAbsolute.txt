@@ -1,0 +1,11 @@
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\bin\Debug\lab9.exe.config
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\obj\Debug\lab9.vbprojResolveAssemblyReference.cache
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\obj\Debug\lab9.Form1.resources
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\obj\Debug\lab9.Resources.resources
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\obj\Debug\lab9.vbproj.GenerateResource.Cache
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\obj\Debug\lab9.xml
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\bin\Debug\lab9.exe
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\bin\Debug\lab9.pdb
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\bin\Debug\lab9.xml
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\obj\Debug\lab9.exe
+D:\Code\GitHub\PolyUCourseworks\COMP2222\lab9\lab9\obj\Debug\lab9.pdb
