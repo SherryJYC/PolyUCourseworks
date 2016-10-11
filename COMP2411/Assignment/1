@@ -1,0 +1,17 @@
+1. 
+a. 
+SELECT sname
+FROM Student
+WHERE level='JR'
+  AND snum IN
+    (SELECT snum
+     FROM Enrolled
+     WHERE cname='I. Tech')
+2. 
+SELECT MAX(age) AS maxage
+FROM Student
+WHERE major='history'
+   OR snum IN
+      (SELECT snum
+       FROM Enrolled
+       WHERE cname='I. Tech');
