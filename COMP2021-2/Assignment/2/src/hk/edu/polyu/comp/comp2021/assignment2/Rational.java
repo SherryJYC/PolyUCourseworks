@@ -87,6 +87,7 @@ public class Rational {
         }
         if (isNegtive)
             numerator *= -1;
+
     }
 
 }
