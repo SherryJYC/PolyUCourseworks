@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Draw a point with a mouse click</title>
+</head>
+
+<body onload="main()">
+  <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+  </canvas>
+
+  <script>
+    var VSHADER_SOURCE =
+    'attribute vec4 a_Position;\n' +
+    'void main() {\n' +
+    '  gl_Position = a_Position;\n' +
+    '  gl_PointSize = 10.0;\n' +
+    '}\n';
+
+    // Fragment shader program
+    var FSHADER_SOURCE =
+      'void main() {\n' +
+      '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
+      '}\n';
+
+    var mode = 'i';//i for default; d for drw;v for vertex reposition
+
+    function main() {
+      // Retrieve <canvas> element
+      var canvas = document.getElementById('webgl');
+
+      // Get the rendering context for WebGL
+      var gl = getWebGLContext(canvas);
+      if (!gl) {
+        console.log('Failed to get the rendering context for WebGL');
+        return;
+      }
+
+      // Initialize shaders
+      if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
+        console.log('Failed to intialize shaders.');
+        return;
+      }
+
+      // Initializa buffers
+      initVertexBuffers(gl);
+
+
+      // Register function (event handler) to be called on a mouse press
+      canvas.onmousedown = function (ev) { click(ev, gl, canvas); };
+
+      // Register function (event handler) to be called on a key press
+      document.onkeydown = function (ev) { keyDown(ev, gl, canvas); };
+
+      // Specify the color for clearing <canvas>
+      gl.clearColor(1.0, 1.0, 1.0, 1.0);
+
+      // Clear <canvas>
+      gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+
+    var g_points = []; // The array for the position of a mouse press
+
+
+    var vertexBuffer;
+
+    function click(ev, gl, canvas) {
+      if (mode === 'd') {
+        var x = ev.clientX; // x coordinate of a mouse pointer
+        var y = ev.clientY; // y coordinate of a mouse pointer
+        var rect = ev.target.getBoundingClientRect();
+
+        x = ((x - rect.left) - canvas.width / 2) / (canvas.width / 2);
+        y = (canvas.height / 2 - (y - rect.top)) / (canvas.height / 2);
+        // Store the coordinates to g_points array
+        g_points.push(x); g_points.push(y);
+        var len = g_points.length;
+
+        // Bind the buffer object to target
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        // Write date into the buffer object
+        gl.bufferData(gl.ARRAY_BUFFER, len * 4, gl.DYNAMIC_DRAW);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(g_points))
+
+        gl.drawArrays(gl.POINTS, 0, len / 2);
+
+      }
+    }
+
+    function keyDown(ev, gl, canvas) {
+      var keyCode = ev.keyCode;
+      if (keyCode === 68) {
+        if (mode === 'd') {
+          alert("You have already entered Drawing Mode.");
+          return;
+        } else if (mode === 'v') {
+          alert("You are currently in Vertex Reposition Mode. If you want to enter Drawing Mode, please" +
+            "enter ESC to exit from Vertex Reposition Mode fist.");
+          return;
+        }
+        alert("You entered Drawing Mode.");
+        mode = 'd';
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        g_points = [];
+      } else if (keyCode === 83) {
+        if (mode !== 'i') {
+          alert("Please exit Drawing Mode or Vertex Reposition Mode first.");
+          return;
+        }
+        alert("Saved successifully.");
+      } else if (keyCode === 86){
+        if (mode === 'v') {
+          alert("You have already entered Vertex Reposition Mode.");
+          return;
+        } else if (mode === 'd') {
+          alert("You are currently in Drawing Mode. If you want to enter Vertex Reposition Mode, please" +
+            "enter ESC to exit from Drwating Mode fist.");
+          return;
+        }
+        alert("You entered Vertex Reposition Mode.");
+        mode = 'v';
+      } else if (keyCode === 27) {
+        if (mode === 'd') {
+          gl.drawArrays(gl.LINE_LOOP, 0, g_points.length / 2);
+          alert("You exit from Drawing Mode");
+          mode = 'i';
+          return;
+        } else if (mode === 'v') {
+          alert("You exit from Vertex Reposition Mode");
+          mode = 'i';
+          return;
+        } else {
+          var exit = confirm("Do you want to exit the program?", true);
+        }
+      }
+    }
+
+    function initVertexBuffers(gl) {
+      vertexBuffer = gl.createBuffer();
+      // Create a buffer object
+      if (!vertexBuffer) {
+        console.log('Failed to create the buffer object');
+        return -1;
+      }
+
+      // Bind the buffer object to target
+      gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+      // Write date into the buffer object
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(g_points), gl.DYNAMIC_DRAW);
+
+      var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      if (a_Position < 0) {
+        console.log('Failed to get the storage location of a_Position');
+        return -1;
+      }
+
+      // Assign the buffer object to a_Position variable
+      gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+
+      // Enable the assignment to a_Position variable
+      gl.enableVertexAttribArray(a_Position);
+
+    }
+
+
+
+    //help methods
+    function getWebGLContext(canvas, opt_debug) {
+      // Get the rendering context for WebGL
+      var gl = setupWebGL(canvas);
+      if (!gl) return null;
+
+      return gl;
+    }
+
+    function setupWebGL(canvas, opt_attribs, opt_onError) {
+      function handleCreationError(msg) {
+        var container = document.getElementsByTagName("body")[0];
+        //var container = canvas.parentNode;
+        if (container) {
+          var str = window.WebGLRenderingContext ?
+            OTHER_PROBLEM :
+               GET_A_WEBGL_BROWSER;
+          if (msg) {
+            str += "<br/><br/>Status: " + msg;
+          }
+          container.innerHTML = makeFailHTML(str);
+        }
+      };
+
+      opt_onError = opt_onError || handleCreationError;
+
+      if (canvas.addEventListener) {
+        canvas.addEventListener("webglcontextcreationerror", function (event) {
+          opt_onError(event.statusMessage);
+        }, false);
+      }
+      var context = create3DContext(canvas, opt_attribs);
+      if (!context) {
+        if (!window.WebGLRenderingContext) {
+          opt_onError("");
+        } else {
+          opt_onError("");
+        }
+      }
+
+      return context;
+    }
+
+    function create3DContext(canvas, opt_attribs) {
+      var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+      var context = null;
+      for (var ii = 0; ii < names.length; ++ii) {
+        try {
+          context = canvas.getContext(names[ii], opt_attribs);
+        } catch (e) { }
+        if (context) {
+          break;
+        }
+      }
+      return context;
+    }
+
+    function initShaders(gl, vshader, fshader) {
+      var program = createProgram(gl, vshader, fshader);
+      if (!program) {
+        console.log('Failed to create program');
+        return false;
+      }
+
+      gl.useProgram(program);
+      gl.program = program;
+
+      return true;
+    }
+
+    function createProgram(gl, vshader, fshader) {
+      // Create shader object
+      var vertexShader = loadShader(gl, gl.VERTEX_SHADER, vshader);
+      var fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fshader);
+      if (!vertexShader || !fragmentShader) {
+        return null;
+      }
+
+      // Create a program object
+      var program = gl.createProgram();
+      if (!program) {
+        return null;
+      }
+
+      // Attach the shader objects
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+
+      // Link the program object
+      gl.linkProgram(program);
+
+      // Check the result of linking
+      var linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+      if (!linked) {
+        var error = gl.getProgramInfoLog(program);
+        console.log('Failed to link program: ' + error);
+        gl.deleteProgram(program);
+        gl.deleteShader(fragmentShader);
+        gl.deleteShader(vertexShader);
+        return null;
+      }
+      return program;
+    }
+
+    function loadShader(gl, type, source) {
+      // Create shader object
+      var shader = gl.createShader(type);
+      if (shader == null) {
+        console.log('unable to create shader');
+        return null;
+      }
+
+      // Set the shader program
+      gl.shaderSource(shader, source);
+
+      // Compile the shader
+      gl.compileShader(shader);
+
+      // Check the result of compilation
+      var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+      if (!compiled) {
+        var error = gl.getShaderInfoLog(shader);
+        console.log('Failed to compile shader: ' + error);
+        gl.deleteShader(shader);
+        return null;
+      }
+
+      return shader;
+    }
+
+
+  </script>
+</body>
+</html>
