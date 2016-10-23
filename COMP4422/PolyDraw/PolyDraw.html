@@ -8,21 +8,40 @@
 <body onload="main()">
     <canvas id="webgl" width="400" height="400">
         Please use a browser that supports "canvas"
-    </canvas>
-
-    <script>
+</canvas> 
+    
+    <table>
+        <tr><td>Text to Save:</td></tr>
+        <tr>
+            <td colspan="3">
+                <textarea id="inputTextToSave" cols="80" rows="25"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>Filename to Save As:</td>
+            <td><input id="inputFileNameToSaveAs"></input></td>
+            <td><button onclick="saveTextAsFile()">Save Text to File</button></td>
+        </tr>
+        <tr>
+            <td>Select a File to Load:</td>
+            <td><input type="file" id="fileToLoad"></td>
+            <td><button onclick="loadFileAsText()">Load Selected File</button>
+            <td>
+        </tr>
+    </table>
+<script>
         var VSHADER_SOURCE =
-          'attribute vec4 a_Position;\n' +
-            'void main() {\n' +
-            '  gl_Position = a_Position;\n' +
-            '  gl_PointSize = 10.0;\n' +
-            '}\n';
+            'attribute vec4 a_Position;\n' +
+                'void main() {\n' +
+                '  gl_Position = a_Position;\n' +
+                '  gl_PointSize = 10.0;\n' +
+                '}\n';
 
         // Fragment shader program
         var FSHADER_SOURCE =
-          'void main() {\n' +
-            '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
-            '}\n';
+            'void main() {\n' +
+                '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
+                '}\n';
 
         var mode = 'i'; //i for default; d for drw;v for vertex reposition
 
@@ -97,7 +116,7 @@
                     return;
                 } else if (mode === 'v') {
                     alert("You are currently in Vertex Reposition Mode. If you want to enter Drawing Mode, please" +
-                      "enter ESC to exit from Vertex Reposition Mode fist.");
+                        "enter ESC to exit from Vertex Reposition Mode fist.");
                     return;
                 }
                 alert("You entered Drawing Mode.");
@@ -110,7 +129,8 @@
                     return;
                 }
                 if (checkVertex()) {
-                    doSave(g_points, "text/latex", "hello.txt");
+                    doSave(g_points, "txt/latex", "polygon.txt");
+                    doSave2();
                     alert("Save SUCCESSFULLY!");
                 } else {
                     alert("Save FAILED! The polygon is invalid!");
@@ -122,7 +142,7 @@
                     return;
                 } else if (mode === 'd') {
                     alert("You are currently in Drawing Mode. If you want to enter Vertex Reposition Mode, please" +
-                      "enter ESC to exit from Drwating Mode fist.");
+                        "enter ESC to exit from Drwating Mode fist.");
                     return;
                 }
                 alert("You entered Vertex Reposition Mode.");
@@ -147,6 +167,56 @@
             return true;
         }
 
+        function doSave2() {
+            var textFile = null,
+              makeTextFile = function (text) {
+                  var data = new Blob([text], { type: 'text/plain' });
+
+                  // If we are replacing a previously generated file we need to
+                  // manually revoke the object URL to avoid memory leaks.
+                  if (textFile !== null) {
+                      window.URL.revokeObjectURL(textFile);
+                  }
+
+                  textFile = window.URL.createObjectURL(data);
+
+                  // returns a URL you can use as a href
+                  return textFile;
+              };
+        }
+
+        function saveTextAsFile() {
+            var textToSave = document.getElementById("inputTextToSave").value;
+            var textToSaveAsBlob = new Blob([textToSave], { type: "text/plain" });
+            var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+            var fileNameToSaveAs = document.getElementById("inputFileNameToSaveAs").value;
+
+            var downloadLink = document.createElement("a");
+            downloadLink.download = fileNameToSaveAs;
+            downloadLink.innerHTML = "Download File";
+            downloadLink.href = textToSaveAsURL;
+            downloadLink.onclick = destroyClickedElement;
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+
+            downloadLink.click();
+        }
+
+        function destroyClickedElement(event) {
+            document.body.removeChild(event.target);
+        }
+
+        function loadFileAsText() {
+            var fileToLoad = document.getElementById("fileToLoad").files[0];
+
+            var fileReader = new FileReader();
+            fileReader.onload = function (fileLoadedEvent) {
+                var textFromFileLoaded = fileLoadedEvent.target.result;
+                document.getElementById("inputTextToSave").value = textFromFileLoaded;
+            };
+            fileReader.readAsText(fileToLoad, "UTF-8");
+        }
+
         function doSave(value, type, name) {
             var blob;
             if (typeof window.Blob == "function") {
@@ -157,7 +227,9 @@
                 bb.append(value);
                 blob = bb.getBlob(type);
             }
+
             var URL = window.URL || window.webkitURL;
+            //var URL = "./";
             var bloburl = URL.createObjectURL(blob);
             var anchor = document.createElement("a");
             if ('download' in anchor) {
@@ -174,16 +246,6 @@
             } else {
                 location.href = bloburl;
             }
-        }
-
-        function saveVertex(fileName, content) {
-            var aLink = document.createElement('a');
-            var blob = new Blob([content]);
-            var evt = document.createEvent("HTMLEvents");
-            evt.initEvent("click", false, false); //initEvent 不加后两个参数在FF下会报错, 感谢 Barret Lee 的反馈
-            aLink.download = fileName;
-            aLink.href = URL.createObjectURL(blob);
-            aLink.dispatchEvent(evt);
         }
 
         function initVertexBuffers(gl) {
@@ -240,10 +302,10 @@
 
             if (canvas.addEventListener) {
                 canvas.addEventListener("webglcontextcreationerror",
-                  function (event) {
-                      opt_onError(event.statusMessage);
-                  },
-                  false);
+                    function (event) {
+                        opt_onError(event.statusMessage);
+                    },
+                    false);
             }
             var context = create3DContext(canvas, opt_attribs);
             if (!context) {
@@ -346,6 +408,6 @@
         }
 
 
-    </script>
+    </script> 
 </body>
 </html>
