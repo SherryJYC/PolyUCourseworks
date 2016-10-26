@@ -8,28 +8,9 @@
 <body onload="main()">
     <canvas id="webgl" width="400" height="400">
         Please use a browser that supports "canvas"
-</canvas> 
+    </canvas> 
     
-    <table>
-        <tr><td>Text to Save:</td></tr>
-        <tr>
-            <td colspan="3">
-                <textarea id="inputTextToSave" cols="80" rows="25"></textarea>
-            </td>
-        </tr>
-        <tr>
-            <td>Filename to Save As:</td>
-            <td><input id="inputFileNameToSaveAs"></input></td>
-            <td><button onclick="saveTextAsFile()">Save Text to File</button></td>
-        </tr>
-        <tr>
-            <td>Select a File to Load:</td>
-            <td><input type="file" id="fileToLoad"></td>
-            <td><button onclick="loadFileAsText()">Load Selected File</button>
-            <td>
-        </tr>
-    </table>
-<script>
+    <script>
         var VSHADER_SOURCE =
             'attribute vec4 a_Position;\n' +
                 'void main() {\n' +
@@ -84,14 +65,20 @@
 
         var vertexBuffer;
 
-        function click(ev, gl, canvas) {
-            if (mode === 'd') {
-                var x = ev.clientX; // x coordinate of a mouse pointer
-                var y = ev.clientY; // y coordinate of a mouse pointer
-                var rect = ev.target.getBoundingClientRect();
+        var chosed = false;
+        var chosedV;
 
-                x = ((x - rect.left) - canvas.width / 2) / (canvas.width / 2);
-                y = (canvas.height / 2 - (y - rect.top)) / (canvas.height / 2);
+        function click(ev, gl, canvas) {
+
+            var x = ev.clientX; // x coordinate of a mouse pointer
+            var y = ev.clientY; // y coordinate of a mouse pointer
+            var rect = ev.target.getBoundingClientRect();
+
+            x = ((x - rect.left) - canvas.width / 2) / (canvas.width / 2);
+            y = (canvas.height / 2 - (y - rect.top)) / (canvas.height / 2);
+
+            if (mode === 'd') {
+
                 // Store the coordinates to g_points array
                 g_points.push(x);
                 g_points.push(y);
@@ -105,6 +92,51 @@
 
                 gl.drawArrays(gl.POINTS, 0, len / 2);
 
+            } else if (mode === 'v') {
+                if (!chosed) {
+                    var nearest = nearestVertex(x, y);
+                    if (nearest >= 0) {
+                        chosed = true;
+                        chosedV = nearest;
+                        alert("You have picked a vertex. Now, click another position on the canvas to move the vertex.");
+                    } else {
+                        alert("Please click on the vertex!");
+                    }
+                } else {
+                    g_points[chosedV] = x;
+                    g_points[chosedV + 1] = y;
+
+                    var len = g_points.length;
+
+                    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                    // Write date into the buffer object
+                    gl.bufferData(gl.ARRAY_BUFFER, len * 4, gl.DYNAMIC_DRAW);
+                    gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(g_points))
+
+                    gl.drawArrays(gl.POINTS, 0, len / 2);
+                    chosed = false;
+                }
+
+
+            }
+        }
+
+        function nearestVertex(x, y) {
+            var num = -1;
+            var nearest = -1;
+            for (var i = 0; i < g_points.length; i += 2) {
+                var cur = Math.abs(g_points[i] - x) + Math.abs(g_points[i + 1] - y);
+                if ( cur < nearest || nearest < 0) {
+                    nearest = cur;
+                    num = i;
+                }
+            }
+            if (nearest < 100) {
+                alert(num);
+                return num;
+            } else {
+                alert(nearest);
+                return -1;
             }
         }
 
@@ -130,8 +162,8 @@
                 }
                 if (checkVertex()) {
                     doSave(g_points, "txt/latex", "polygon.txt");
-                    doSave2();
-                    alert("Save SUCCESSFULLY!");
+                    alert("Save SUCCESSFULLY! ");
+                    alert("Please move the downloaded file to J:\\comp4422\\asg\\01\\13104036d\\data\\ and make sure the file name is \"polygon.txt\"");
                 } else {
                     alert("Save FAILED! The polygon is invalid!");
                 }
@@ -147,6 +179,7 @@
                 }
                 alert("You entered Vertex Reposition Mode.");
                 mode = 'v';
+                reposition(gl);
             } else if (keyCode === 27) { //Exit
                 if (mode === 'd') {
                     gl.drawArrays(gl.LINE_LOOP, 0, g_points.length / 2);
@@ -163,58 +196,13 @@
             }
         }
 
+        function reposition(gl) {
+            gl.drawArrays(gl.POINTS, 0, g_points.length / 2);
+            
+        }
+
         function checkVertex() {
             return true;
-        }
-
-        function doSave2() {
-            var textFile = null,
-              makeTextFile = function (text) {
-                  var data = new Blob([text], { type: 'text/plain' });
-
-                  // If we are replacing a previously generated file we need to
-                  // manually revoke the object URL to avoid memory leaks.
-                  if (textFile !== null) {
-                      window.URL.revokeObjectURL(textFile);
-                  }
-
-                  textFile = window.URL.createObjectURL(data);
-
-                  // returns a URL you can use as a href
-                  return textFile;
-              };
-        }
-
-        function saveTextAsFile() {
-            var textToSave = document.getElementById("inputTextToSave").value;
-            var textToSaveAsBlob = new Blob([textToSave], { type: "text/plain" });
-            var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-            var fileNameToSaveAs = document.getElementById("inputFileNameToSaveAs").value;
-
-            var downloadLink = document.createElement("a");
-            downloadLink.download = fileNameToSaveAs;
-            downloadLink.innerHTML = "Download File";
-            downloadLink.href = textToSaveAsURL;
-            downloadLink.onclick = destroyClickedElement;
-            downloadLink.style.display = "none";
-            document.body.appendChild(downloadLink);
-
-            downloadLink.click();
-        }
-
-        function destroyClickedElement(event) {
-            document.body.removeChild(event.target);
-        }
-
-        function loadFileAsText() {
-            var fileToLoad = document.getElementById("fileToLoad").files[0];
-
-            var fileReader = new FileReader();
-            fileReader.onload = function (fileLoadedEvent) {
-                var textFromFileLoaded = fileLoadedEvent.target.result;
-                document.getElementById("inputTextToSave").value = textFromFileLoaded;
-            };
-            fileReader.readAsText(fileToLoad, "UTF-8");
         }
 
         function doSave(value, type, name) {
@@ -274,7 +262,6 @@
             gl.enableVertexAttribArray(a_Position);
 
         }
-
 
         //help methods
         function getWebGLContext(canvas, opt_debug) {
@@ -405,7 +392,7 @@
             }
 
             return shader;
-        }
+        }         
 
 
     </script> 
