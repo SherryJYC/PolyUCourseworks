@@ -5,7 +5,6 @@ def main():
     first = input("Please enter a starting number and an ending number: ").split(",")
     start = int(first[0].strip())
     end = int(first[1].strip())
-    print(start + end)
     second = input("Please enter the number of numbers printed on a row and the number of spaces per item:").split(",")
     row = int(second[0].strip())
     space = int(second[1].strip())

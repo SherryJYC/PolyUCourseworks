@@ -3,15 +3,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>4e535d4c-56bc-4191-9942-6fcf6fc10097</ProjectGuid>
+    <ProjectGuid>f57e2b77-e389-4044-8956-a290aa347718</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>COMP1001_A5_Q1_13104036D.py</StartupFile>
+    <StartupFile>test.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>5</Name>
-    <RootNamespace>5</RootNamespace>
+    <Name>4</Name>
+    <RootNamespace>4</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -23,11 +23,11 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="COMP1001_A5_Q1_13104036D.py" />
-    <Compile Include="COMP1001_A5_Q2_13104036D.py">
+    <Compile Include="Exercise1.py" />
+    <Compile Include="Exercise2.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="COMP1001_A5_Q3_13104036D.py">
+    <Compile Include="test.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

@@ -2,11 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Draw a point with a mouse click</title>
+    <title>Draw a point with a mouse click</title> 
+    <style>
+        html, body {
+        width:  100%;
+        height: 100%;
+        margin: 0px;
+        }
+    </style>
+    
+
 </head>
 
 <body onload="main()">
-    <canvas id="webgl" width="400" height="400">
+<canvas id="webgl" width="400" height="400">
         Please use a browser that supports "canvas"
     </canvas> 
     
@@ -29,13 +38,11 @@
         function main() {
             // Retrieve <canvas> element
             var canvas = document.getElementById('webgl');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
 
             // Get the rendering context for WebGL
             var gl = getWebGLContext(canvas);
-            if (!gl) {
-                console.log('Failed to get the rendering context for WebGL');
-                return;
-            }
 
             // Initialize shaders
             if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
@@ -53,8 +60,10 @@
             // Register function (event handler) to be called on a key press
             document.onkeydown = function (ev) { keyDown(ev, gl, canvas); };
 
+            window.onresize = function(ev) { resize(ev, gl, canvas); };
+
             // Specify the color for clearing <canvas>
-            gl.clearColor(1.0, 1.0, 1.0, 1.0);
+            gl.clearColor(0.0, 0.0, 0.0, 0.0);
 
             // Clear <canvas>
             gl.clear(gl.COLOR_BUFFER_BIT);
@@ -69,6 +78,8 @@
         var chosedV;
 
         function click(ev, gl, canvas) {
+
+            //...drawing code...
 
             var x = ev.clientX; // x coordinate of a mouse pointer
             var y = ev.clientY; // y coordinate of a mouse pointer
@@ -108,8 +119,8 @@
 
                     var len = g_points.length;
 
+
                     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-                    // Write date into the buffer object
                     gl.bufferData(gl.ARRAY_BUFFER, len * 4, gl.DYNAMIC_DRAW);
                     gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(g_points))
 
@@ -119,6 +130,25 @@
 
 
             }
+        }
+
+        function resize(ev, gl, canvas) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            var len = g_points.length;
+
+
+            if (mode === 'd') {
+                gl.drawArrays(gl.POINTS, 0, len / 2);
+            } else if (mode === 'v') {
+                gl.drawArrays(gl.POINTS, 0, len / 2);
+            } else {
+                gl.drawArrays(gl.LINE_LOOP, 0, len / 2);
+            }
+
         }
 
         function nearestVertex(x, y) {
@@ -131,7 +161,7 @@
                     num = i;
                 }
             }
-            if (nearest < 100) {
+            if (nearest < 0.005) {
                 alert(num);
                 return num;
             } else {
@@ -141,6 +171,7 @@
         }
 
         function keyDown(ev, gl, canvas) {
+            //...drawing code...
             var keyCode = ev.keyCode;
             if (keyCode === 68) { //Drawing mode
                 if (mode === 'd') {
@@ -153,6 +184,7 @@
                 }
                 alert("You entered Drawing Mode.");
                 mode = 'd';
+                gl.clearColor(0.0, 0.0, 0.0, 0.0);
                 gl.clear(gl.COLOR_BUFFER_BIT);
                 g_points = [];
             } else if (keyCode === 83) { //Save
@@ -187,6 +219,7 @@
                     mode = 'i';
                     return;
                 } else if (mode === 'v') {
+                    gl.drawArrays(gl.LINE_LOOP, 0, g_points.length / 2);
                     alert("You exit from Vertex Reposition Mode");
                     mode = 'i';
                     return;
@@ -197,11 +230,13 @@
         }
 
         function reposition(gl) {
+            //...drawing code...
             gl.drawArrays(gl.POINTS, 0, g_points.length / 2);
             
         }
 
         function checkVertex() {
+
             return true;
         }
 
