@@ -1,3 +1,0 @@
-﻿  VisualGDB: Run "C:\ProgramFiles\cygwin\bin\make.exe CONFIG=Debug" in directory "D:\Code\GitHub\PolyUCourseworks\COMP2432\RMB2\RMB2" on local computer
-  C:/ProgramFiles/cygwin/bin/gcc.exe -ggdb -ffunction-sections -O0   -DDEBUG  -c scheduleModule.c -o Debug/scheduleModule.o -MD -MF Debug/scheduleModule.dep
-  C:/ProgramFiles/cygwin/bin/g++.exe -o Debug/RMB2.exe -Wl,-gc-sections    -Wl,--start-group Debug/geneticAlgorithm.o Debug/helpModule.o Debug/inputModule.o Debug/RBM.o Debug/outputModule.o Debug/scheduleModule.o    -Wl,--end-group
