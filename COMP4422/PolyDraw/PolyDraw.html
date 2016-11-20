@@ -42,7 +42,7 @@
             canvas.height = window.innerHeight;
 
             // Get the rendering context for WebGL
-            var gl = getWebGLContext(canvas);
+            var gl = canvas.getContext("experimental-webgl");
 
             // Initialize shaders
             if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
@@ -127,8 +127,6 @@
                     gl.drawArrays(gl.POINTS, 0, len / 2);
                     chosed = false;
                 }
-
-
             }
         }
 
@@ -148,7 +146,6 @@
             } else {
                 gl.drawArrays(gl.LINE_LOOP, 0, len / 2);
             }
-
         }
 
         function nearestVertex(x, y) {
@@ -232,14 +229,12 @@
         function reposition(gl) {
             //...drawing code...
             gl.drawArrays(gl.POINTS, 0, g_points.length / 2);
-            
         }
 
         function checkVertex() {
             var pointNum = g_points.length / 2;
             var i = 0;
             for (var n = 0; n < pointNum; n++) {
-
                 var x1 = g_points[i];
                 var y1 = g_points[i + 1];
                 if (n === pointNum - 1) {
@@ -249,15 +244,14 @@
                     var x2 = g_points[i + 2];
                     var y2 = g_points[i + 3];
                 }
-
-                var para = makeLine(x1, y1, x2, y2);
+                var para =
+                    makeLine(x1, y1, x2, y2);
                 var w = para[0];
                 var b = para[1];
 
                 var count = n + 2;
                 if (count === pointNum)
                     count = 0;
-
 
                 var start = i + 4;
                 if (start === g_points.length)
@@ -276,10 +270,7 @@
                     j += 2;
                 }
                 i += 2;
-
             }
-
-
             return true;
         }
 
@@ -324,6 +315,7 @@
             }
         }
 
+        //help methods
         function initVertexBuffers(gl) {
             vertexBuffer = gl.createBuffer();
             // Create a buffer object
@@ -349,64 +341,6 @@
             // Enable the assignment to a_Position variable
             gl.enableVertexAttribArray(a_Position);
 
-        }
-
-        //help methods
-        function getWebGLContext(canvas, opt_debug) {
-            // Get the rendering context for WebGL
-            var gl = setupWebGL(canvas);
-            if (!gl) return null;
-
-            return gl;
-        }
-
-        function setupWebGL(canvas, opt_attribs, opt_onError) {
-            function handleCreationError(msg) {
-                var container = document.getElementsByTagName("body")[0];
-                //var container = canvas.parentNode;
-                if (container) {
-                    var str = window.WebGLRenderingContext ? OTHER_PROBLEM : GET_A_WEBGL_BROWSER;
-                    if (msg) {
-                        str += "<br/><br/>Status: " + msg;
-                    }
-                    container.innerHTML = makeFailHTML(str);
-                }
-            };
-
-            opt_onError = opt_onError || handleCreationError;
-
-            if (canvas.addEventListener) {
-                canvas.addEventListener("webglcontextcreationerror",
-                    function (event) {
-                        opt_onError(event.statusMessage);
-                    },
-                    false);
-            }
-            var context = create3DContext(canvas, opt_attribs);
-            if (!context) {
-                if (!window.WebGLRenderingContext) {
-                    opt_onError("");
-                } else {
-                    opt_onError("");
-                }
-            }
-
-            return context;
-        }
-
-        function create3DContext(canvas, opt_attribs) {
-            var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
-            var context = null;
-            for (var ii = 0; ii < names.length; ++ii) {
-                try {
-                    context = canvas.getContext(names[ii], opt_attribs);
-                } catch (e) {
-                }
-                if (context) {
-                    break;
-                }
-            }
-            return context;
         }
 
         function initShaders(gl, vshader, fshader) {
@@ -481,8 +415,6 @@
 
             return shader;
         }         
-
-
     </script> 
 </body>
 </html>

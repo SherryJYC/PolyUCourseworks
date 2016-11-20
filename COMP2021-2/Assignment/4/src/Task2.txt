@@ -1,0 +1,9 @@
+COMP2021
+ZHENG Hongyi
+13104036d
+
+1.	Make a new Class Variable.
+2.	Make a new Interface Expr. Let Literal, Variable, and BinaryExpr implement Expr.
+3.	Let BinaryExpr contains two reference of Expr(Polymophism). Modify its constructor also.
+4.	Make a new Class Environment. Use Hashmap to contain String-Literal pair. Provide utility methods.
+5.	Let Variable instance get the corresponding Literal from Environment. Provide utility methods.
