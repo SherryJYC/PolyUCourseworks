@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>MyHead</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="libraries/three.js"></script>
+    <script src="libraries/Detector.js"></script>
+    <script src="libraries/OBJLoader.js"></script>
+    <script src="libraries/MTLLoader.js"></script>
+</head>
+<body>
+    <script>
+        var VSHADER_SOURCE =
+            'attribute vec4 a_Position;\n' +
+                'void main() {\n' +
+                '  gl_Position = a_Position;\n' +
+                '  gl_PointSize = 10.0;\n' +
+                '}\n';
+
+        var FSHADER_SOURCE =
+            'void main() {\n' +
+                '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
+                '}\n';
+    </script>
+    <script src="myhead.js"></script>
+</body>
+</html>
