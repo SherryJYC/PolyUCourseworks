@@ -1,0 +1,2 @@
+1. gcc ./Assignment4_13104036d
+2. ./a.out input_file
